@@ -742,7 +742,7 @@
       </div>
     </div>
     <div class="reveal d1">
-      <form class="quote-form" id="quote-form" action="https://formspree.io/f/mallory.tech.ent@gmail.com" method="POST">
+      <form class="quote-form" id="quote-form">
         <div class="form-row">
           <div class="form-group">
             <label class="form-label" for="fname">Your Name</label>
@@ -795,7 +795,7 @@
         <button type="submit" class="form-submit">Get My Free Audit &rarr;</button>
       </form>
       <div class="form-success" id="quote-success">
-        <strong>You're in.</strong> We received your details and will be in touch within one business day. Email us directly at <a href="mailto:mallory.tech.ent@gmail.com" style="color:var(--sage);">mallory.tech.ent@gmail.com</a>.
+        <strong>Almost there.</strong> Your email app should have opened with your details filled in &mdash; just hit send and we'll reply within one business day. If nothing opened, email us directly: Email us directly at <a href="mailto:mallory.tech.ent@gmail.com" style="color:var(--sage);">mallory.tech.ent@gmail.com</a>.
       </div>
     </div>
   </div>
@@ -886,11 +886,27 @@
 
   const quoteForm = document.getElementById('quote-form');
   if (quoteForm) {
-    quoteForm.addEventListener('submit', function() {
-      setTimeout(() => {
-        quoteForm.style.display = 'none';
-        document.getElementById('quote-success').style.display = 'block';
-      }, 150);
+    quoteForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const f = new FormData(quoteForm);
+      const services = f.getAll('services');
+      const body = [
+        'Name: '     + (f.get('name') || ''),
+        'Business: ' + (f.get('business') || ''),
+        'Industry: ' + (f.get('business_type') || ''),
+        'Services: ' + (services.length ? services.join(', ') : '(none selected)'),
+        'Email: '    + (f.get('email') || ''),
+        'Phone: '    + (f.get('phone') || '(not given)'),
+        '',
+        'Message:',
+        (f.get('message') || '(none)')
+      ].join('\\n');
+      const subject = 'Free audit request - ' + (f.get('business') || f.get('name') || 'Website enquiry');
+      window.location.href = 'mailto:mallory.tech.ent@gmail.com'
+        + '?subject=' + encodeURIComponent(subject)
+        + '&body='   + encodeURIComponent(body);
+      quoteForm.style.display = 'none';
+      document.getElementById('quote-success').style.display = 'block';
     });
   }
 </script>
