@@ -1,96 +1,59 @@
 # mallorytech.net
 
-Business website for Mallory Tech Enterprises LLC, served by GitHub Pages.
+Business website for Mallory Tech Enterprises LLC, served by GitHub Pages at
+**https://mallorytech.net**.
 
-Plain static HTML — no build step, nothing to install. Edit, commit, push;
+Plain static HTML — no build step, nothing to install. Edit, commit, push to `main`;
 GitHub Pages redeploys in about a minute.
 
 ## Files
 
 | File | Purpose |
 |---|---|
-| `index.html` | The live homepage — single page, all CSS inline |
-| `index-v2.html` | Byte-identical copy of `index.html`, kept as the named v2 design |
-| `local-lighthouse.html` | Google Business Profile product page |
-| `images/` | Photos used by the homepage |
-| `CNAME` | Claims the custom domain. **Do not delete** — GitHub rewrites it when you change the domain in Settings, and removing it drops the custom domain. |
+| `index.html` | The homepage — single page, all CSS inline |
+| `404.html` | Page-not-found page (GitHub Pages serves it automatically) |
+| `images/og-image.jpg` | 1200×630 preview image shown when the link is shared |
+| `sitemap.xml`, `robots.txt` | For search engines. Update `lastmod` in the sitemap after real content changes |
+| `CNAME` | Claims the custom domain. **Do not delete** — removing it drops the custom domain |
 | `.nojekyll` | Skips Jekyll; this is plain HTML |
 
 Fonts load from Google Fonts. Nothing else is external.
 
-## Hosting status
-
-GitHub Pages is **already configured and building** — this was set up in May 2026:
+## Hosting
 
 - Source: `main` branch, root folder
-- Custom domain: `mallorytech.net`
-- Enforce HTTPS: on
+- Custom domain: `mallorytech.net`, HTTPS enforced (verified 2026-10-09; `http://` redirects to `https://`)
+- DNS at GoDaddy: four A records for `@` (`185.199.108.153`, `.109.153`, `.110.153`,
+  `.111.153`) and `www` CNAME → `eyeamabbi-debug.github.io`
 
-**Nothing needs changing in the repo settings.** The site is unreachable purely
-because of DNS, below.
+If HTTPS ever breaks: GitHub → Settings → Pages → clear the custom domain, save,
+re-enter `mallorytech.net`, save, wait for the green check, tick **Enforce HTTPS**.
+That's what fixed it in September 2026.
 
-## DNS — the actual blocker (fix at GoDaddy)
+## Before pushing changes
 
-DNS is managed at GoDaddy (`ns09`/`ns10.domaincontrol.com`). As of 2026-09-09 it
-holds leftovers from a second, abandoned deploy attempt that break the first one.
+The site is built to WCAG 2.2 AA. After any edit, run the accessibility sweep from
+the Executive Assistant project and expect 0 violations:
 
-**Delete these two records:**
-
-| Type | Name | Value | Why it breaks things |
-|---|---|---|---|
-| A | `@` | `162.159.140.166` | A Cloudflare address mixed in with the GitHub ones. Roughly a quarter of visitors get routed to a host that isn't serving the site, and it makes GitHub's domain check fail — which is why no HTTPS certificate has been issued. |
-| CNAME | `www` | `sites.ludicrous.cloud` | Points at a service whose domain no longer resolves at all. Returns Cloudflare Error 1001. |
-
-**Then the records should be exactly:**
-
-| Type | Name | Value |
-|---|---|---|
-| A | `@` | `185.199.108.153` |
-| A | `@` | `185.199.109.153` |
-| A | `@` | `185.199.110.153` |
-| A | `@` | `185.199.111.153` |
-| CNAME | `www` | `eyeamabbi-debug.github.io` |
-
-All four A records are required. Only three were present, which alone would have
-kept it from working.
-
-**After the DNS change:**
-
-1. Wait for propagation — usually minutes, up to an hour
-2. GitHub repo → Settings → Pages → re-save the custom domain to retrigger the check
-3. Once the check passes, GitHub issues the certificate automatically
-
-Verify from PowerShell:
-
-```powershell
-Resolve-DnsName mallorytech.net -Type A | Select-Object IPAddress
-Resolve-DnsName www.mallorytech.net    | Select-Object NameHost
+```bash
+cd ".claude/skills/ada-audit"
+node scripts/a11y-sweep.mjs "C:\All the Claudes\mallorytech-site" --out ./results-mallorytech
 ```
 
-Expect exactly the four `185.199.10x.153` addresses and nothing else.
+Don't put client names or client-identifying numbers on this site.
 
 ## Contact form
 
-The form composes an email in the visitor's mail client, addressed to
-`mallory.tech.ent@gmail.com`, with all fields filled in. The visitor still has to
-press send.
-
-**This replaced a broken setup.** The form previously posted to
-`https://formspree.io/f/mallory.tech.ent@gmail.com`, which is not a valid Formspree
-endpoint — those use a short generated ID, never an email address. Worse, the page
-showed a "We received your details" success message on submit regardless of whether
-the POST succeeded, so every enquiry was silently lost while the visitor believed
-they had made contact.
+GitHub Pages has no server, so the free-evaluation form opens the visitor's email
+app with a message to `mallory.tech.ent@gmail.com`, fields filled in. The visitor
+still has to press send, and the on-page message tells them so.
 
 **To move to a real form backend later:** create a form at <https://formspree.io>,
-then in `index.html` restore `action="https://formspree.io/f/YOUR_FORM_ID"` and
-`method="POST"` on the `<form>` tag and drop the `e.preventDefault()` handler.
-Test by submitting the live form once and confirming the email arrives.
+set `action="https://formspree.io/f/YOUR_FORM_ID"` and `method="POST"` on the
+`<form>`, and replace the mailto submit handler. Test once on the live site.
 
-## Not in this repo
+## History
 
-The June 2026 homepage redesign ("GET FOUND. GET LEADS. GET AUTOMATED.", with the
-logo integrated) and the logo concept sheets remain working files in
-`C:\All the Claudes\Claude World\projects\mallory-tech-website\`. The v2 design was
-deliberately kept live. To switch, copy that `index.html` plus
-`images/mallory-tech-logo.png` here and push.
+The previous homepage (sage and cream design, seven services) and the
+`local-lighthouse.html` product page were removed on 2026-10-09. Both are in git
+history if ever needed.
