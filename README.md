@@ -44,13 +44,11 @@ Don't put client names or client-identifying numbers on this site.
 
 ## Contact form
 
-GitHub Pages has no server, so the free-evaluation form opens the visitor's email
-app with a message to `mallory.tech.ent@gmail.com`, fields filled in. The visitor
-still has to press send, and the on-page message tells them so.
-
-**To move to a real form backend later:** create a form at <https://formspree.io>,
-set `action="https://formspree.io/f/YOUR_FORM_ID"` and `method="POST"` on the
-`<form>`, and replace the mailto submit handler. Test once on the live site.
+GitHub Pages has no server, so the free-evaluation form posts to FormSubmit
+(`https://formsubmit.co/ajax/lauram@internetmedianow.com`), which emails each request
+to that inbox. The visitor never leaves the page. A hidden `_honey` field traps bots.
+FormSubmit activates once per email + site: the first submission sends an
+"Activate Form" link to the inbox.
 
 ## History
 

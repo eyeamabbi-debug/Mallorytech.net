@@ -27,7 +27,7 @@
   "@type": "ProfessionalService",
   "name": "Mallory Tech Enterprises LLC",
   "url": "https://mallorytech.net/",
-  "email": "mallory.tech.ent@gmail.com",
+  "email": "lauram@internetmedianow.com",
   "description": "Website building, Google Business Profile optimization and review automation for local businesses.",
   "areaServed": { "@type": "City", "name": "Gainesville, FL" },
   "address": { "@type": "PostalAddress", "addressLocality": "Gainesville", "addressRegion": "FL", "addressCountry": "US" },
@@ -352,7 +352,7 @@
         <p class="eyebrow">Free website evaluation</p>
         <h2 id="eval-h">See what’s costing you customers</h2>
         <p class="lede">Every finding is checked on your live site, Google profile and search results, with what it costs you and how to fix it. Includes an ADA check against WCAG 2.2 AA.</p>
-        <p class="lede">Rather talk in person? I’ll come by your business or meet on a video call. Or email me at <a href="mailto:mallory.tech.ent@gmail.com">mallory.tech.ent@gmail.com</a>.</p>
+        <p class="lede">Rather talk in person? I’ll come by your business or meet on a video call. Or email me at <a href="mailto:lauram@internetmedianow.com">lauram@internetmedianow.com</a>.</p>
       </div>
       <form class="eval-form" id="eval-form" aria-labelledby="eval-h" novalidate>
         <p class="form-note">All fields are required except website.</p>
@@ -376,7 +376,7 @@
       <span>Website design, Google profiles and review automation in Gainesville, FL</span>
     </div>
     <div class="col">
-      <a href="mailto:mallory.tech.ent@gmail.com">mallory.tech.ent@gmail.com</a>
+      <a href="mailto:lauram@internetmedianow.com">lauram@internetmedianow.com</a>
       <a href="#eval">Request a free website evaluation</a>
     </div>
     <p class="legal">© <span id="year">2026</span> Mallory Tech Enterprises LLC · Built to WCAG 2.2 AA</p>
@@ -387,7 +387,7 @@
   document.getElementById('year').textContent = new Date().getFullYear();
 
   // GitHub Pages has no server, so the form posts to FormSubmit, which emails
-  // the request to mallory.tech.ent@gmail.com. The visitor never leaves the page.
+  // the request to lauram@internetmedianow.com. The visitor never leaves the page.
   (function () {
     var form = document.getElementById('eval-form');
     var status = document.getElementById('form-status');
@@ -420,7 +420,7 @@
       button.disabled = true;
       status.className = 'form-status';
       status.textContent = 'Sending…';
-      fetch('https://formsubmit.co/ajax/mallory.tech.ent@gmail.com', {
+      fetch('https://formsubmit.co/ajax/lauram@internetmedianow.com', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify(data)
@@ -433,7 +433,7 @@
         })
         .catch(function () {
           status.className = 'form-status error';
-          status.textContent = 'That didn’t send. Please try again, or email mallory.tech.ent@gmail.com.';
+          status.textContent = 'That didn’t send. Please try again, or email lauram@internetmedianow.com.';
         })
         .then(function () { button.disabled = false; });
     });
