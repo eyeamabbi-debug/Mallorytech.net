@@ -171,6 +171,7 @@
   .form-note { margin: 0; font-size: 1.1rem; color: var(--muted); }
   .form-status { min-height: 28px; font-weight: 700; color: var(--emerald); margin: 0; }
   .form-status.error { color: #b3261e; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
 
   /* Footer */
   .site-footer { padding: 48px 0; color: var(--muted-on-dark); }
@@ -359,6 +360,7 @@
         <div class="field"><label for="f-biz">Business name</label><input id="f-biz" name="business" type="text" autocomplete="organization" required></div>
         <div class="field"><label for="f-site">Website <span class="opt">(optional)</span></label><input id="f-site" name="website" type="text" inputmode="url" autocomplete="url" placeholder="yourbusiness.com"></div>
         <div class="field"><label for="f-contact">Best phone or email</label><input id="f-contact" name="contact" type="text" autocomplete="email" required></div>
+        <div class="hp" aria-hidden="true"><label for="f-honey">Leave this empty</label><input id="f-honey" type="text" name="_honey" tabindex="-1" autocomplete="off"></div>
         <button class="btn btn-ink" type="submit">Send me my evaluation</button>
         <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
       </form>
@@ -384,11 +386,12 @@
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
 
-  // GitHub Pages has no server, so the form opens the visitor's email app with
-  // every field filled in. The status line says so, so no one thinks it sent itself.
+  // GitHub Pages has no server, so the form posts to FormSubmit, which emails
+  // the request to mallory.tech.ent@gmail.com. The visitor never leaves the page.
   (function () {
     var form = document.getElementById('eval-form');
     var status = document.getElementById('form-status');
+    var button = form.querySelector('button[type="submit"]');
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var missing = null;
@@ -404,17 +407,35 @@
         return;
       }
       var f = new FormData(form);
-      var body = [
-        'Name: ' + f.get('name'),
-        'Business: ' + f.get('business'),
-        'Website: ' + (f.get('website') || '(none)'),
-        'Best contact: ' + f.get('contact')
-      ].join('\n');
-      window.location.href = 'mailto:mallory.tech.ent@gmail.com'
-        + '?subject=' + encodeURIComponent('Free evaluation request - ' + f.get('business'))
-        + '&body=' + encodeURIComponent(body);
+      var data = {
+        name: f.get('name'),
+        business: f.get('business'),
+        website: f.get('website') || '(none)',
+        contact: f.get('contact'),
+        _honey: f.get('_honey'),
+        _subject: 'Free evaluation request - ' + f.get('business'),
+        _template: 'table'
+      };
+      if (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(data.contact.trim())) data._replyto = data.contact.trim();
+      button.disabled = true;
       status.className = 'form-status';
-      status.textContent = 'Your email app should open with your details filled in. Press send and I’ll be in touch.';
+      status.textContent = 'Sending…';
+      fetch('https://formsubmit.co/ajax/mallory.tech.ent@gmail.com', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(data)
+      })
+        .then(function (r) { return r.json().then(function (j) { if (!r.ok || String(j.success) !== 'true') throw j; }); })
+        .then(function () {
+          form.reset();
+          status.className = 'form-status';
+          status.textContent = 'Got it! Your request is in. I’ll be in touch within one business day.';
+        })
+        .catch(function () {
+          status.className = 'form-status error';
+          status.textContent = 'That didn’t send. Please try again, or email mallory.tech.ent@gmail.com.';
+        })
+        .then(function () { button.disabled = false; });
     });
   })();
 </script>
